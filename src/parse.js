@@ -3,7 +3,8 @@ const getRawSchedule = require('./post');
 function convertDays(days) {
   const refDate = new Date(1900, 0, 1);
   const resultDate = new Date(refDate.getTime() + days * 24 * 60 * 60 * 1000);
-  const jsonDateString = resultDate.toISOString().split('T')[0];
+  const amsterdamDate = resultDate.toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' });
+  const jsonDateString = amsterdamDate.split(',')[0];
   return jsonDateString;
 }
 
