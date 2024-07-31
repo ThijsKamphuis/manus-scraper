@@ -1,7 +1,7 @@
 require('dotenv').config()
 async function getRawSchedule(year, week) {
     const resp = await fetch("https://server.manus.plus/intergamma/app/token", {
-        "body": `client_id=employee&grant_type=password&username=${process.env.USER}&password=${process.env.PASSWORD}`,
+        "body": `client_id=employee&grant_type=password&username=${process.env.MANUS_USER}&password=${process.env.MANUS_PASSWORD}`,
         "method": "POST"
     });
 
