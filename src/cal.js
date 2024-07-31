@@ -34,12 +34,12 @@ async function generateCal() {
             generateEvent(schedule[i]);
         }
     }
-    // fs.writeFile('events.json', JSON.stringify(events, null, 2), (err) => {
-    //     if (err) {
-    //         console.log(err);
-    //         return;
-    //     }
-    // });
+    fs.writeFile('events.json', JSON.stringify(events, null, 2), (err) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+    });
     ics.createEvents(events, (error, value) => {
         if (error) {
             console.log(error)
