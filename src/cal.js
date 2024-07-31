@@ -40,31 +40,12 @@ async function generateCal() {
             return;
         }
     });
-    const timezone = `
-BEGIN:VTIMEZONE
-TZID:Europe/Amsterdam
-BEGIN:STANDARD
-DTSTART:19701025T030000
-RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10
-TZOFFSETFROM:+0200
-TZOFFSETTO:+0100
-TZNAME:CET
-END:STANDARD
-BEGIN:DAYLIGHT
-DTSTART:19700329T020000
-RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3
-TZOFFSETFROM:+0100
-TZOFFSETTO:+0200
-TZNAME:CEST
-END:DAYLIGHT
-END:VTIMEZONE`;
 
     ics.createEvents(events, (error, value) => {
         if (error) {
             console.log(error)
             return
         }
-        value = value.replace('X-PUBLISHED-TTL:PT1H', 'X-PUBLISHED-TTL:PT1H' + timezone);
         app.get('/ical.ics', (req, res) => {
             res.set('Content-Disposition', 'attachment; filename="ical.ics"');
             res.set('Content-Type', 'text/calendar');
