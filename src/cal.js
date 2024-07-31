@@ -27,35 +27,43 @@ async function generateEvent(day) {
 }
 
 
+async function generateCal() {
+    for (let j = 1; j < 34; j++) {
+        let schedule = await getSchedule(2024, j);
+        for (let i = 0; i < schedule.length; i++) {
+            generateEvent(schedule[i]);
+        }
+    }
+    // fs.writeFile('events.json', JSON.stringify(events, null, 2), (err) => {
+    //     if (err) {
+    //         console.log(err);
+    //         return;
+    //     }
+    // });
+    ics.createEvents(events, (error, value) => {
+        if (error) {
+            console.log(error)
+            return
+        }
+        app.get('/ical.ics', (req, res) => {
+            res.set('Content-Disposition', 'attachment; filename="gamma.ics"');
+            res.set('Content-Type', 'text/calendar');
+            res.send(value);
+        })
+        console.log('Uploaded ICS');
+
+
+    })
+}
 
 
 (async () => {
+    await generateCal();
+    app.listen(port, () => {
+        console.log(`App listening on port:${port}`)
+    })
     setInterval(async () => {
-        for (let j = 1; j < 34; j++) {
-            let schedule = await getSchedule(2024, j);
-            for (let i = 0; i < schedule.length; i++) {
-                generateEvent(schedule[i]);
-            }
-        }
-        // fs.writeFile('events.json', JSON.stringify(events, null, 2), (err) => {
-        //     if (err) {
-        //         console.log(err);
-        //         return;
-        //     }
-        // });
-        ics.createEvents(events, (error, value) => {
-            if (error) {
-                console.log(error)
-                return
-            }
-            app.get('/ical.ics', (req, res) => {
-                res.set('Content-Disposition', 'attachment; filename="gamma.ics"');
-                res.set('Content-Type', 'text/calendar');
-                res.send(value);
-            })
-            app.listen(port, () => {
-                console.log(`App listening on port:${port}`)
-            })
-        })
-    }, 5 * 60 * 1000);
+        await generateCal();
+        console.log('Trigger refresh');
+    }, 1000 * 60 * 5);
 })()
