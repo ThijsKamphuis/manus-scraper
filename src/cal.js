@@ -65,7 +65,7 @@ async function generateCal() {
             console.log(error)
             return
         }
-        value = value.replace('X-PUBLISHED-TTL:PT1H', 'X-PUBLISHED-TTL:PT1H' + timeZone);
+        value = value.replace('X-PUBLISHED-TTL:PT1H', 'X-PUBLISHED-TTL:PT1H' + timezone);
         app.get('/ical.ics', (req, res) => {
             res.set('Content-Disposition', 'attachment; filename="ical.ics"');
             res.set('Content-Type', 'text/calendar');
