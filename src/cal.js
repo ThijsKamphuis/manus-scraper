@@ -14,7 +14,7 @@ async function generateEvent(day) {
     const dateDay = date.getDate();
 
     const event = {
-        start: [dateYear, dateMonth, dateDay, day.startTime.hours - 2, day.startTime.minutes],
+        start: [dateYear, dateMonth, dateDay, day.startTime.hours, day.startTime.minutes],
         duration: {
             hours: day.endTime.hours - day.startTime.hours - (day.endTime.minutes < day.startTime.minutes ? 1 : 0),
             minutes: Math.abs(day.endTime.minutes - day.startTime.minutes)
