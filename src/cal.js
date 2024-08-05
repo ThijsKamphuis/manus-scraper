@@ -28,8 +28,7 @@ async function generateEvent(day) {
 
 
 async function generateCal() {
-    const currentWeek = new Date().getWeek();
-    for (let j = 1; j <= Math.min(currentWeek + 2, 51); j++) {
+    for (let j = 1; j <= 51; j++) {
         let schedule = await getSchedule(2024, j);
         for (let i = 0; i < schedule.length; i++) {
             generateEvent(schedule[i]);
