@@ -30,6 +30,9 @@ async function generateEvent(day) {
 async function generateCal() {
     for (let j = 1; j <= 51; j++) {
         let schedule = await getSchedule(2024, j);
+        if (schedule === 0) {
+            continue;
+        }   
         for (let i = 0; i < schedule.length; i++) {
             generateEvent(schedule[i]);
         }
