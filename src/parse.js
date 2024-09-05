@@ -24,7 +24,7 @@ async function getSchedule(year, week) {
   }
   let rawSchedule = output.schedule;
   let departments = output.departments;
-  let userInfo = output.contracts[0];
+  let nodes = output.nodes;
   const weekschedule = [];
   for (let i = 0; i < rawSchedule.length; i++) {
     const day = rawSchedule[i];
@@ -36,7 +36,7 @@ async function getSchedule(year, week) {
     const startTime = convertMinutes(day.entries[0].startTime);
     const endTime = convertMinutes(day.entries[0].endTime);
     const department = departments[day.entries[0].departmentId].name;
-    const store = `${userInfo.nodeCode} - ${userInfo.nodeName}`;
+    const store = `${nodes[day.entries[0].nodeId].code} - ${nodes[day.entries[0].nodeId].name}`;
     weekschedule.push({ id, date, startTime, endTime, department, store });
   }
   return weekschedule;
