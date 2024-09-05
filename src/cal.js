@@ -6,7 +6,7 @@ const app = express()
 const port = 3069
 
 const events = [];
-async function generateEvent(day) {
+function generateEvent(day) {
 
     const date = new Date(day.date);
     const dateYear = date.getFullYear();
@@ -28,6 +28,7 @@ async function generateEvent(day) {
 
 
 async function generateCal() {
+    events.length = 0;
     for (let j = 1; j <= 51; j++) {
         let schedule = await getSchedule(2024, j);
         if (schedule === 0) {
@@ -44,19 +45,21 @@ async function generateCal() {
         }
     });
 
-    ics.createEvents(events, (error, value) => {
-        if (error) {
-            console.log(error)
-            return
-        }
-        app.get('/ical.ics', (req, res) => {
+    
+    app.get('/ical.ics', (req, res) => {
+        ics.createEvents(events, (error, value) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
             res.set('Content-Disposition', 'attachment; filename="ical.ics"');
             res.set('Content-Type', 'text/calendar');
             res.send(value);
-        })
-        console.log('Uploaded ICS');
-
-    })
+        });
+    });
+    
+    console.log('Uploaded ICS');
+    
 }
 
 
@@ -66,7 +69,12 @@ async function generateCal() {
         console.log(`App listening on port:${port}`)
     })
     setInterval(async () => {
-        await generateCal();
-        console.log('Trigger refresh');
+        try {
+            await generateCal();
+            console.log('Trigger refresh');
+        } catch (err) {
+            console.error('Error during refresh:', err);
+        }
     }, 1000 * 60 * 5);
 })()
+
