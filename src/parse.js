@@ -19,7 +19,7 @@ function convertMinutes(minutes) {
 
 async function getSchedule(year, week) {
   let output = await getRawSchedule(year, week);
-  if (output.contracts === undefined || output.departments === undefined|| output.schedule === undefined) {
+  if (output.contracts === undefined || output.departments === undefined || output.schedule === undefined) {
     return 0;
   }
   let rawSchedule = output.schedule;
@@ -30,7 +30,7 @@ async function getSchedule(year, week) {
     const day = rawSchedule[i];
     const id = day.date;
     const date = convertDays(day.date);
-    if (day.entries.length === 0) {
+    if (day.entries.length === 0 || day.vacation.length > 0) {
       continue;
     }
     const startTime = convertMinutes(day.entries[0].startTime);
