@@ -1,11 +1,11 @@
 const getRawSchedule = require('./post');
 
-function convertDays(days) {
-  const refDate = new Date(1900, 0, 1);
-  const resultDate = new Date(refDate.getTime() + days * 24 * 60 * 60 * 1000);
-  const jsonDateString = resultDate.toISOString().split('T')[0];
-  return jsonDateString;
-}
+// function convertDays(days) {
+//   const refDate = new Date(1900, 0, 1);
+//   const resultDate = new Date(refDate.getTime() + days * 24 * 60 * 60 * 1000);
+//   const jsonDateString = resultDate.toISOString().split('T')[0];
+//   return jsonDateString;
+// }
 
 function convertMinutes(minutes) {
   const hours = Math.floor(minutes / 60);
@@ -14,6 +14,18 @@ function convertMinutes(minutes) {
     hours: hours,
     minutes: mins
   };
+}
+
+function convertDays(days) {
+  const refDate = new Date(1900, 0, 1);
+  const resultDate = new Date(refDate.getTime() + days * 24 * 60 * 60 * 1000);
+  
+  // Adjust for daylight savings
+  const offset = resultDate.getTimezoneOffset() * 60 * 1000;
+  const adjustedDate = new Date(resultDate.getTime() - offset);
+  
+  const jsonDateString = adjustedDate.toISOString().split('T')[0];
+  return jsonDateString;
 }
 
 
