@@ -13,15 +13,30 @@ function generateEvent(day) {
     const dateMonth = date.getMonth() + 1;
     const dateDay = date.getDate();
 
+    const isDST = (date) => {
+        const lastSunday = (month) => {
+            const d = new Date(date.getFullYear(), month + 1, 0);
+            const day = d.getDay();
+            return d.getDate() - day;
+        };
+
+        const lastSundayMarch = new Date(date.getFullYear(), 2, lastSunday(2));
+        const lastSundayOctober = new Date(date.getFullYear(), 9, lastSunday(9));
+
+        return date >= lastSundayMarch && date <= lastSundayOctober;
+    };
+
+    const offset = isDST(date) ? 2 : 1;
+
     const event = {
-        start: [dateYear, dateMonth, dateDay, Math.abs(day.startTime.hours - 2), day.startTime.minutes],
+        start: [dateYear, dateMonth, dateDay, Math.abs(day.startTime.hours - offset), day.startTime.minutes],
         duration: {
             hours: day.endTime.hours - day.startTime.hours - (day.endTime.minutes < day.startTime.minutes ? 1 : 0),
             minutes: Math.abs(day.endTime.minutes - day.startTime.minutes)
         },
         title: day.department,
         location: day.store,
-    }
+    };
     events.push(event);
 
 }
