@@ -44,13 +44,15 @@ function generateEvent(day) {
 
 async function generateCal() {
     events.length = 0;
-    for (let j = 1; j <= 51; j++) {
-        let schedule = await getSchedule(2024, j);
-        if (schedule === 0) {
-            continue;
-        }   
-        for (let i = 0; i < schedule.length; i++) {
-            generateEvent(schedule[i]);
+    for (let y = 2021; y <= 2025; y++) {
+        for (let j = 1; j <= 51; j++) {
+            let schedule = await getSchedule(y, j);
+            if (schedule === 0) {
+                continue;
+            }   
+            for (let i = 0; i < schedule.length; i++) {
+                generateEvent(schedule[i]);
+            }
         }
     }
     fs.writeFile('events.json', JSON.stringify(events, null, 2), (err) => {
@@ -76,6 +78,7 @@ async function generateCal() {
     console.log('Uploaded ICS');
     
 }
+
 
 
 (async () => {
