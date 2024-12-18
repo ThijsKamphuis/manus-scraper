@@ -45,7 +45,7 @@ function generateEvent(day) {
 async function generateCal() {
     events.length = 0;
     for (let y = 2022; y <= 2025; y++) {
-        for (let j = 1; j <= 51; j++) {
+        for (let j = 1; j <= 52; j++) {
             let schedule = await getSchedule(y, j);
             if (schedule === 0) {
                 continue;
