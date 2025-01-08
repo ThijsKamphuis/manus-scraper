@@ -1,9 +1,11 @@
 const getSchedule = require('./parse');
+const login = require('./post');
 const ics = require('ics');
 const fs = require('fs');
 const express = require('express')
 const app = express()
 const port = 3069
+
 
 const events = [];
 function generateEvent(day) {
@@ -43,10 +45,11 @@ function generateEvent(day) {
 
 
 async function generateCal() {
+    const token = await login();
     events.length = 0;
     for (let y = 2022; y <= 2025; y++) {
         for (let j = 1; j <= 52; j++) {
-            let schedule = await getSchedule(y, j);
+            let schedule = await getSchedule(y, j, token);
             if (schedule === 0) {
                 continue;
             }   

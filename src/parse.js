@@ -17,8 +17,8 @@ function convertMinutes(minutes) {
 }
 
 
-async function getSchedule(year, week) {
-  let output = await getRawSchedule(year, week);
+async function getSchedule(year, week, token) {
+  let output = await getRawSchedule(year, week, token);
   if (output.contracts === undefined || output.departments === undefined || output.schedule === undefined) {
     return 0;
   }
