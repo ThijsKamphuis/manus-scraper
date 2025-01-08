@@ -1,5 +1,5 @@
 const getSchedule = require('./parse');
-const login = require('./post');
+const {login} = require('./post');
 const ics = require('ics');
 const fs = require('fs');
 const express = require('express')

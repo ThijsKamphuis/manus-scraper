@@ -1,4 +1,4 @@
-const getRawSchedule = require('./post');
+const {getRawSchedule} = require('./post');
 
 function convertDays(days) {
   const refDate = new Date(1900, 0, 1);
