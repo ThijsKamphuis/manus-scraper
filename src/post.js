@@ -20,5 +20,5 @@ async function getRawSchedule(year, week, token) {
     return (await workdays.json());
 }
 
-module.exports = getRawSchedule, login;
-;
+module.exports = {login, getRawSchedule};
+
