@@ -55,6 +55,7 @@ async function generateCal() {
             }   
             for (let i = 0; i < schedule.length; i++) {
                 generateEvent(schedule[i]);
+                console.log('Generated event:', schedule[i]);
             }
         }
     }

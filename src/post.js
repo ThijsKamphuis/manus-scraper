@@ -6,6 +6,7 @@ async function login() {
     });
 
     const token = (await resp.json()).access_token;
+    console.log(token);
     return token;
 }
 
