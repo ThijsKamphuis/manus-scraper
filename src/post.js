@@ -1,14 +1,10 @@
 require('dotenv').config()
 async function login() {
-    console.log(process.env.MANUS_USER);
-    console.log(process.env.MANUS_PASSWORD);
     const resp = await fetch("https://server.manus.plus/intergamma/app/token", {
         "body": `client_id=employee&grant_type=password&username=${process.env.MANUS_USER}&password=${process.env.MANUS_PASSWORD}`,
         "method": "POST"
     });
-    console.log(resp);
     const token = (await resp.json()).access_token;
-    console.log(token);
     return token;
 }
 
