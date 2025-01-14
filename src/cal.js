@@ -5,6 +5,20 @@ const express = require('express')
 const app = express()
 const port = 3069
 
+
+const client = require('prom-client');
+const gateway = new client.Pushgateway('http://localhost:9091');
+const register = new client.Registry();
+
+const requestsGauge = new client.Gauge({
+    name: 'requests',
+    help: 'All requests',
+    labelNames: ['ip', 'browser', 'time']
+});
+
+
+
+
 const events = [];
 function generateEvent(day) {
 
@@ -61,7 +75,35 @@ async function generateCal() {
     });
 
     
-    app.get('/ical.ics', (req, res) => {
+    
+}
+
+
+(async () => {
+    app.use((req, res, next) => {
+        const ip = req.ip;
+        const browser = req.headers['user-agent'];
+        const time = new Date().toLocaleString();
+        
+        // Set the Gauge metric for each request with method, route, and time
+        requestsGauge.set({ip: ip, browser: browser, time: time}, 1);
+    
+        // Push the updated metrics to Pushgateway
+        gateway.pushAdd({ jobName: 'requests_gauge' }, (err) => {
+            if (err) {
+                console.error('Failed to push metrics to Pushgateway:', err);
+            }
+        });
+        next();
+    });
+
+    app.set('trust proxy', true)
+    app.listen(port, () => {
+        console.log(`App listening on port:${port}`)
+    })
+
+    app.get('/ical.ics', async (req, res) => {
+        await generateCal();
         ics.createEvents(events, (error, value) => {
             if (error) {
                 console.log(error);
@@ -71,25 +113,12 @@ async function generateCal() {
             res.set('Content-Type', 'text/calendar');
             res.send(value);
         });
+        console.log("IP: " + req.ip);
+        console.log("Browser: " + req.headers['user-agent']);
+        console.log("Time: " + new Date().toLocaleString());
     });
-    
-    console.log('Uploaded ICS');
-    
-}
 
+    
 
-(async () => {
-    await generateCal();
-    app.listen(port, () => {
-        console.log(`App listening on port:${port}`)
-    })
-    setInterval(async () => {
-        try {
-            await generateCal();
-            console.log('Trigger refresh');
-        } catch (err) {
-            console.error('Error during refresh:', err);
-        }
-    }, 1000 * 60 * 5);
 })()
 
