@@ -9,7 +9,7 @@ const port = 3069
 
 
 const client = require('prom-client');
-const gateway = new client.Pushgateway('http://localhost:9091');
+const gateway = new client.Pushgateway('http://192.168.1.203:9091');
 const register = new client.Registry();
 
 const requestsGauge = new client.Gauge({
