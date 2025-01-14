@@ -90,7 +90,7 @@ async function generateCal() {
         const browser = req.headers['user-agent'];
         const currentTime = new Date();
         currentTime.setHours(currentTime.getHours() + 1);
-        const time = new currentTime.toLocaleString();
+        const time = currentTime.toLocaleString();
         
         // Set the Gauge metric for each request with method, route, and time
         requestsGauge.set({ip: ip, browser: browser, time: time}, 1);
