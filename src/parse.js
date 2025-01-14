@@ -1,4 +1,4 @@
-const getRawSchedule = require('./post');
+const {getRawSchedule} = require('./post');
 
 function convertDays(days) {
   const refDate = new Date(1900, 0, 1);
@@ -17,8 +17,8 @@ function convertMinutes(minutes) {
 }
 
 
-async function getSchedule(year, week) {
-  let output = await getRawSchedule(year, week);
+async function getSchedule(year, week, token) {
+  let output = await getRawSchedule(year, week, token);
   if (output.contracts === undefined || output.departments === undefined || output.schedule === undefined) {
     return 0;
   }
