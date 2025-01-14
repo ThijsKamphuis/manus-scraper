@@ -88,7 +88,9 @@ async function generateCal() {
     app.use((req, res, next) => {
         const ip = req.ip;
         const browser = req.headers['user-agent'];
-        const time = new Date().toLocaleString();
+        const currentTime = new Date();
+        currentTime.setHours(currentTime.getHours() + 1);
+        const time = new currentTime.toLocaleString();
         
         // Set the Gauge metric for each request with method, route, and time
         requestsGauge.set({ip: ip, browser: browser, time: time}, 1);
@@ -120,7 +122,9 @@ async function generateCal() {
         });
         console.log("IP: " + req.ip);
         console.log("Browser: " + req.headers['user-agent']);
-        console.log("Time: " + new Date().toLocaleString() + Date.getTimezoneOffset() * 60 * 1000);
+        const currentTime = new Date();
+        currentTime.setHours(currentTime.getHours() + 1);
+        console.log("Time: " + currentTime.toLocaleString());
     });
 
     
