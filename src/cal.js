@@ -120,7 +120,7 @@ async function generateCal() {
         });
         console.log("IP: " + req.ip);
         console.log("Browser: " + req.headers['user-agent']);
-        console.log("Time: " + new Date().toLocaleString());
+        console.log("Time: " + new Date().toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' }));
     });
 
     
