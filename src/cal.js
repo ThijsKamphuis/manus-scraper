@@ -109,6 +109,12 @@ app.use((req, res, next) => {
     app.listen(port, () => {
         console.log(`App listening on port:${port}`)
     })
+    refreshGauge.set({time: new Date().toLocaleString()}, 1);
+    gateway.pushAdd({ jobName: 'calendar_refresh_gauge' }, (err) => {
+        if (err) {
+            console.error(err);
+        }
+    });
     setInterval(async () => {
         const randomDelay = Math.floor(Math.random() * 60);
         await new Promise(resolve => setTimeout(resolve, randomDelay * 60 * 1000));
