@@ -82,6 +82,19 @@ async function generateCal() {
             return;
         }
     });
+    app.get('/ical.ics', (req, res) => {
+        ics.createEvents(events, (error, value) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            res.set('Content-Disposition', 'attachment; filename="ical.ics"');
+            res.set('Content-Type', 'text/calendar');
+            res.send(value);
+        });
+    });
+    
+    console.log('Uploaded ICS');
 
     
     
@@ -107,6 +120,7 @@ async function generateCal() {
 
 (async () => {
     await generateCal();
+    console.log('Calender Generated | ' + new Date().toLocaleString() + '\n' + '-'.repeat(20));
     app.set('trust proxy', true)
     app.listen(port, () => {
         console.log(`App listening on port:${port}`)
@@ -114,7 +128,7 @@ async function generateCal() {
     setInterval(async () => {
         try {
             await generateCal();
-            console.log('Trigger refresh | ' + new Date().toLocaleString());
+            console.log('Calender Generated | ' + new Date().toLocaleString());
         } catch (err) {
             console.error('Error during refresh:', err);
         }
