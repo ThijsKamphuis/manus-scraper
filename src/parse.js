@@ -33,11 +33,14 @@ async function getSchedule(year, week, token) {
     if (day.entries.length === 0 || day.vacation.length > 0) {
       continue;
     }
-    const startTime = convertMinutes(day.entries[0].startTime);
-    const endTime = convertMinutes(day.entries[0].endTime);
-    const department = departments[day.entries[0].departmentId].name;
-    const store = `${nodes[day.entries[0].nodeId].code} - ${nodes[day.entries[0].nodeId].name}`;
-    weekschedule.push({ id, date, startTime, endTime, department, store });
+    for (let j = 0; j < day.entries.length; j++) {
+      const entry = day.entries[j];
+      const startTime = convertMinutes(entry.startTime);
+      const endTime = convertMinutes(entry.endTime);
+      const department = departments[entry.departmentId].name;
+      const store = `${nodes[entry.nodeId].code} - ${nodes[entry.nodeId].name}`;
+      weekschedule.push({ id, date, startTime, endTime, department, store });
+    }
   }
   return weekschedule;
 };
