@@ -9,7 +9,6 @@ const port = 3069
 
 
 const client = require('prom-client');
-const schedule = require('node-schedule');
 const gateway = new client.Pushgateway('http://192.168.1.203:9091');
 const register = new client.Registry();
 
@@ -115,7 +114,7 @@ async function generateCal() {
     })
 
     
-    schedule.scheduleJob('0 */3 * * *', async () => {
+    setInterval(async () => {
         const randomDelay = Math.floor(Math.random() * 60);
         await new Promise(resolve => setTimeout(resolve, randomDelay * 60 * 1000));
         try {
@@ -126,10 +125,10 @@ async function generateCal() {
                     console.error('Failed to push metrics to Pushgateway:', err);
                 }
             });
-            console.log(new Date.toLocaleString() + 'Refreshed');
+            console.log(new Date().toLocaleString() + ' Refreshed');
         } catch (err) {
             console.error('Error during refresh:', err);
         }
-    });
+    }, 1000 * 60 * 60 * 3);
 })
 
