@@ -108,12 +108,13 @@ async function generateCal() {
     });
 
     app.set('trust proxy', true)
-    })
 
     await generateCal();
     app.listen(port, () => {
         console.log(`App listening on port:${port}`)
     })
+
+    
     schedule.scheduleJob('0 */3 * * *', async () => {
         const randomDelay = Math.floor(Math.random() * 60);
         await new Promise(resolve => setTimeout(resolve, randomDelay * 60 * 1000));
@@ -130,8 +131,5 @@ async function generateCal() {
             console.error('Error during refresh:', err);
         }
     });
-
-    
-
-})()
+})
 
