@@ -108,8 +108,6 @@ async function generateCal() {
     });
 
     app.set('trust proxy', true)
-    app.listen(port, () => {
-        console.log(`App listening on port:${port}`)
     })
 
     await generateCal();
