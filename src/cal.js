@@ -87,33 +87,32 @@ async function generateCal() {
     
 }
 
+app.use((req, res, next) => {
+    const ip = req.ip;
+    const browser = req.headers['user-agent'];
+    // const currentTime = new Date();
+    // currentTime.setHours(currentTime.getHours() + 1);
+    const time = currentTime.toLocaleString();
+    
+    requestsGauge.set({ip: ip, browser: browser, time: time}, 1);
+
+    gateway.pushAdd({ jobName: 'requests_gauge' }, (err) => {
+        if (err) {
+            console.error('Failed to push metrics to Pushgateway:', err);
+        }
+    });
+    next();
+});
+
 
 (async () => {
-    app.use((req, res, next) => {
-        const ip = req.ip;
-        const browser = req.headers['user-agent'];
-        // const currentTime = new Date();
-        // currentTime.setHours(currentTime.getHours() + 1);
-        const time = currentTime.toLocaleString();
-        
-        requestsGauge.set({ip: ip, browser: browser, time: time}, 1);
-    
-        gateway.pushAdd({ jobName: 'requests_gauge' }, (err) => {
-            if (err) {
-                console.error('Failed to push metrics to Pushgateway:', err);
-            }
-        });
-        next();
-    });
-
     app.set('trust proxy', true)
-
     await generateCal();
     app.listen(port, () => {
         console.log(`App listening on port:${port}`)
     })
 
-    
+
     setInterval(async () => {
         const randomDelay = Math.floor(Math.random() * 60);
         await new Promise(resolve => setTimeout(resolve, randomDelay * 60 * 1000));
