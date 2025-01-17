@@ -6,6 +6,7 @@ const express = require('express')
 const app = express()
 const port = 3069
 
+process.env.TZ = 'Europe/Amsterdam';
 
 
 const client = require('prom-client');
@@ -126,6 +127,8 @@ async function generateCal() {
         console.log(`App listening on port:${port}`)
     })
     setInterval(async () => {
+        const randomDelay = Math.floor(Math.random() * 60);
+        await new Promise(resolve => setTimeout(resolve, randomDelay * 60 * 1000));
         try {
             await generateCal();
             console.log('Calender Generated | ' + new Date().toLocaleString());
