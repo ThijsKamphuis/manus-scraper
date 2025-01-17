@@ -9,6 +9,7 @@ const port = 3069
 
 
 const client = require('prom-client');
+const schedule = require('node-schedule');
 const gateway = new client.Pushgateway('http://192.168.1.203:9091');
 const register = new client.Registry();
 
@@ -17,7 +18,11 @@ const requestsGauge = new client.Gauge({
     help: 'All requests',
     labelNames: ['ip', 'browser', 'time']
 });
-
+const refreshGauge = new client.Gauge({
+    name: 'calendar_refresh',
+    help: 'Canlendar refreshes',
+    labelNames: ['time']
+});
 
 
 
@@ -88,14 +93,12 @@ async function generateCal() {
     app.use((req, res, next) => {
         const ip = req.ip;
         const browser = req.headers['user-agent'];
-        const currentTime = new Date();
-        currentTime.setHours(currentTime.getHours() + 1);
+        // const currentTime = new Date();
+        // currentTime.setHours(currentTime.getHours() + 1);
         const time = currentTime.toLocaleString();
         
-        // Set the Gauge metric for each request with method, route, and time
         requestsGauge.set({ip: ip, browser: browser, time: time}, 1);
     
-        // Push the updated metrics to Pushgateway
         gateway.pushAdd({ jobName: 'requests_gauge' }, (err) => {
             if (err) {
                 console.error('Failed to push metrics to Pushgateway:', err);
@@ -109,22 +112,25 @@ async function generateCal() {
         console.log(`App listening on port:${port}`)
     })
 
-    app.get('/ical.ics', async (req, res) => {
-        await generateCal();
-        ics.createEvents(events, (error, value) => {
-            if (error) {
-                console.log(error);
-                return;
-            }
-            res.set('Content-Disposition', 'attachment; filename="ical.ics"');
-            res.set('Content-Type', 'text/calendar');
-            res.send(value);
-        });
-        console.log("IP: " + req.ip);
-        console.log("Browser: " + req.headers['user-agent']);
-        const currentTime = new Date();
-        currentTime.setHours(currentTime.getHours() + 1);
-        console.log("Time: " + currentTime.toLocaleString());
+    await generateCal();
+    app.listen(port, () => {
+        console.log(`App listening on port:${port}`)
+    })
+    schedule.scheduleJob('0 */3 * * *', async () => {
+        const randomDelay = Math.floor(Math.random() * 60);
+        await new Promise(resolve => setTimeout(resolve, randomDelay * 60 * 1000));
+        try {
+            await generateCal();
+            refreshGauge.set({time: new Date().toLocaleString()}, 1);
+            gateway.pushAdd({ jobName: 'calendar_refresh_gauge' }, (err) => {
+                if (err) {
+                    console.error('Failed to push metrics to Pushgateway:', err);
+                }
+            });
+            console.log(new Date.toLocaleString() + 'Refreshed');
+        } catch (err) {
+            console.error('Error during refresh:', err);
+        }
     });
 
     
