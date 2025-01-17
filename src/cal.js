@@ -87,47 +87,54 @@ async function generateCal() {
     
 }
 
-app.use((req, res, next) => {
-    const ip = req.ip;
-    const browser = req.headers['user-agent'];
-    // const currentTime = new Date();
-    // currentTime.setHours(currentTime.getHours() + 1);
-    const time = currentTime.toLocaleString();
+// app.use((req, res, next) => {
+//     const ip = req.ip;
+//     const browser = req.headers['user-agent'];
+//     // const currentTime = new Date();
+//     // currentTime.setHours(currentTime.getHours() + 1);
+//     const time = currentTime.toLocaleString();
     
-    requestsGauge.set({ip: ip, browser: browser, time: time}, 1);
+//     requestsGauge.set({ip: ip, browser: browser, time: time}, 1);
 
-    gateway.pushAdd({ jobName: 'requests_gauge' }, (err) => {
-        if (err) {
-            console.error('Failed to push metrics to Pushgateway:', err);
-        }
-    });
-    next();
-});
+//     gateway.pushAdd({ jobName: 'requests_gauge' }, (err) => {
+//         if (err) {
+//             console.error('Failed to push metrics to Pushgateway:', err);
+//         }
+//     });
+//     next();
+// });
 
 
 (async () => {
-    app.set('trust proxy', true)
     await generateCal();
+    app.set('trust proxy', true)
     app.listen(port, () => {
         console.log(`App listening on port:${port}`)
     })
-
-
     setInterval(async () => {
-        const randomDelay = Math.floor(Math.random() * 60);
-        await new Promise(resolve => setTimeout(resolve, randomDelay * 60 * 1000));
         try {
             await generateCal();
-            refreshGauge.set({time: new Date().toLocaleString()}, 1);
-            gateway.pushAdd({ jobName: 'calendar_refresh_gauge' }, (err) => {
-                if (err) {
-                    console.error('Failed to push metrics to Pushgateway:', err);
-                }
-            });
-            console.log(new Date().toLocaleString() + ' Refreshed');
+            console.log('Trigger refresh | ' + new Date().toLocaleString());
         } catch (err) {
             console.error('Error during refresh:', err);
         }
-    }, 1000 * 60 * 60 * 3);
-})
+    }, 1000 * 60 * 60 * 3); //3 hours
+})();
 
+
+// setInterval(async () => {
+//     const randomDelay = Math.floor(Math.random() * 60);
+//     await new Promise(resolve => setTimeout(resolve, randomDelay * 60 * 1000));
+//     try {
+//         await generateCal();
+//         refreshGauge.set({time: new Date().toLocaleString()}, 1);
+//         gateway.pushAdd({ jobName: 'calendar_refresh_gauge' }, (err) => {
+//             if (err) {
+//                 console.error('Failed to push metrics to Pushgateway:', err);
+//             }
+//         });
+//         console.log(new Date().toLocaleString() + ' Refreshed');
+//     } catch (err) {
+//         console.error('Error during refresh:', err);
+//     }
+// }, 1000 * 60 * 60 * 3);
