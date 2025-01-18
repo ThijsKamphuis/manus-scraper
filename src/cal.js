@@ -93,7 +93,7 @@ app.use((req, res, next) => {
     
     requestsGauge.set({ip: ip, browser: browser, time: time}, 1);
 
-    gateway.pushAdd({ jobName: 'requests_gauge' }, (err) => {
+    gateway.pushAdd({ jobName: 'manus' }, (err) => {
         if (err) {
             console.error('Failed to push metrics to Pushgateway:', err);
         }
@@ -109,8 +109,8 @@ app.use((req, res, next) => {
     app.listen(port, () => {
         console.log(`App listening on port:${port}`)
     })
-    refreshGauge.set({time: new Date().toLocaleString()}, 1);
-    gateway.pushAdd({ jobName: 'calendar_refresh_gauge' }, (err) => {
+    refreshGauge.set({time: new Date().toLocaleString('nl-NL', {hour12: false})}, 1);
+    gateway.pushAdd({ jobName: 'manus' }, (err) => {
         if (err) {
             console.error(err);
         }
@@ -124,8 +124,8 @@ app.use((req, res, next) => {
         } catch (err) {
             console.error(err);
         }
-        refreshGauge.set({time: new Date().toLocaleString()}, 1);
-        gateway.pushAdd({ jobName: 'calendar_refresh_gauge' }, (err) => {
+        refreshGauge.set({time: new Date().toLocaleString('nl-NL', {hour12: false})}, 1);
+        gateway.pushAdd({ jobName: 'manus' }, (err) => {
             if (err) {
                 console.error(err);
             }
