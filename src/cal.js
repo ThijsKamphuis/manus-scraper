@@ -89,7 +89,7 @@ async function generateCal() {
 app.use((req, res, next) => {
     const ip = req.ip;
     const browser = req.headers['user-agent'];
-    const time = new Date().toLocaleString();
+    const time = new Date().toLocaleString('nl-NL', {hour12: false});
     
     requestsGauge.set({ip: ip, browser: browser, time: time}, 1);
 
