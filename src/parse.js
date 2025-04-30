@@ -30,11 +30,14 @@ async function getSchedule(year, week, token) {
     const day = rawSchedule[i];
     const id = day.date;
     const date = convertDays(day.date);
-    if (day.entries.length === 0 || day.vacation.length > 0 || day.holiday.length > 0) {
+    if (day.entries.length === 0 || day.vacation.length > 0) {
       continue;
     }
     for (let j = 0; j < day.entries.length; j++) {
       const entry = day.entries[j];
+      if (entry.isPresence === false) {
+        continue;
+      }
       const startTime = convertMinutes(entry.startTime);
       const endTime = convertMinutes(entry.endTime);
       const department = departments[entry.departmentId].name;
